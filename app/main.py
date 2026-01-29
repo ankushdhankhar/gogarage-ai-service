@@ -7,10 +7,13 @@ app = FastAPI(title="Terrain-based Vehicle AI Service")
 # ✅ CORS FIRST (this fixes OPTIONS 400)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],          # DEV MODE
+    allow_origins=[
+        "http://localhost:3000",                     # local dev
+        "https://gogarage-car-service.vercel.app"     # deployed frontend
+    ],
     allow_credentials=True,
-    allow_methods=["*"],          # allows OPTIONS
-    allow_headers=["*"],          # allows Content-Type, Authorization
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # ✅ ROUTES AFTER CORS
