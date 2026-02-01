@@ -9,10 +9,11 @@ router = APIRouter(prefix="/ai", tags=["AI"])
 def analyze_location(data: LocationRequest):
     terrain = infer_terrain(data.latitude, data.longitude)
 
-    suggestions = get_ai_suggestions(
+    result = get_ai_suggestions(
         terrain,
         data.latitude,
-        data.longitude
+        data.longitude,
+        data.message     # 👈 PASS MESSAGE
     )
 
     return {
@@ -20,5 +21,5 @@ def analyze_location(data: LocationRequest):
         "latitude": data.latitude,
         "longitude": data.longitude,
         "terrain": terrain,
-        "suggestions": suggestions
+        "suggestions": result
     }

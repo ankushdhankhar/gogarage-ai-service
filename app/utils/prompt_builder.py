@@ -12,13 +12,6 @@ Location:
 Latitude: {latitude}
 Longitude: {longitude}
 Terrain: {terrain}
-
-Vehicle service context:
-- Suspension
-- Brakes
-- Tires
-- Engine
-- Safety
 """
 
     if user_message:
@@ -26,13 +19,13 @@ Vehicle service context:
 User question:
 "{user_message}"
 
-Answer clearly and briefly.
+Answer clearly and concisely in plain text.
 """
 
     return base_prompt + """
-Give vehicle servicing recommendations.
+Provide vehicle servicing recommendations.
 
-Respond ONLY in JSON:
+Respond ONLY in valid JSON:
 {
   "terrain": "",
   "risk_level": "",

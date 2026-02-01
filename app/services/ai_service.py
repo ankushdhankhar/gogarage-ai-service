@@ -32,9 +32,19 @@ def get_supported_model() -> str:
 MODEL_NAME = get_supported_model()
 print(f"[Groq] Using model: {MODEL_NAME}")
 
+def get_ai_suggestions(
+    terrain: str,
+    latitude: float,
+    longitude: float,
+    user_message: str | None = None
+) -> dict | str:
 
-def get_ai_suggestions(terrain: str, latitude: float, longitude: float) -> dict:
-    prompt = build_vehicle_service_prompt(terrain,latitude,longitude,user_message=data.message)
+    prompt = build_vehicle_service_prompt(
+    terrain,
+    latitude,
+    longitude,
+    user_message)
+
 
     try:
         completion = client.chat.completions.create(

@@ -1,7 +1,7 @@
 from pydantic import BaseModel
+from typing import Optional
 
 class LocationRequest(BaseModel):
     latitude: float
     longitude: float
-    message: str | None = None
-
+    message: Optional[str] = None   # 👈 ADD THIS
