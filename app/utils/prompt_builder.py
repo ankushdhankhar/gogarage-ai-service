@@ -1,7 +1,11 @@
 def build_vehicle_service_prompt(
-    terrain: str, latitude: float, longitude: float
+    terrain: str,
+    latitude: float,
+    longitude: float,
+    user_message: str | None = None
 ) -> str:
-    return f"""
+
+    base_prompt = f"""
 You are an automotive service expert.
 
 Location:
@@ -9,23 +13,30 @@ Latitude: {latitude}
 Longitude: {longitude}
 Terrain: {terrain}
 
-Suggest vehicle servicing recommendations based on this terrain.
-
-Focus on:
-- Suspension & shock absorbers
+Vehicle service context:
+- Suspension
 - Brakes
 - Tires
-- Engine & cooling
-- Safety checks
+- Engine
+- Safety
+"""
 
-Respond ONLY in valid JSON.
-No explanations.
+    if user_message:
+        return base_prompt + f"""
+User question:
+"{user_message}"
 
-JSON format:
-{{
-  "terrain": "{terrain}",
-  "risk_level": "LOW | MEDIUM | HIGH",
+Answer clearly and briefly.
+"""
+
+    return base_prompt + """
+Give vehicle servicing recommendations.
+
+Respond ONLY in JSON:
+{
+  "terrain": "",
+  "risk_level": "",
   "recommended_services": [],
   "driving_tips": []
-}}
+}
 """

@@ -34,7 +34,7 @@ print(f"[Groq] Using model: {MODEL_NAME}")
 
 
 def get_ai_suggestions(terrain: str, latitude: float, longitude: float) -> dict:
-    prompt = build_vehicle_service_prompt(terrain, latitude, longitude)
+    prompt = build_vehicle_service_prompt(terrain,latitude,longitude,user_message=data.message)
 
     try:
         completion = client.chat.completions.create(
