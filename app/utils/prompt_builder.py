@@ -22,20 +22,31 @@ Vehicle context:
 - Safety systems
 """
 
-    # 👉 CHAT MODE
+    # 👉 CHAT MODE (SHORT ANSWERS ONLY)
     if user_message:
         return base_context + f"""
 User question:
 "{user_message}"
 
-Answer in clear, simple English.
-Be practical and helpful.
+Rules for answering:
+- Use simple English
+- Maximum 3 short sentences
+- No paragraphs
+- No explanations unless asked
+- Be direct and practical
+
 Do NOT return JSON.
 """
 
-    # 👉 RECOMMENDATION MODE
+    # 👉 RECOMMENDATION MODE (COMPACT LISTS)
     return base_context + """
 Give vehicle servicing recommendations based on terrain.
+
+Rules:
+- Keep each item short (max 6–8 words)
+- No explanations
+- No paragraphs
+- Use clear action phrases
 
 Respond ONLY in valid JSON:
 {
@@ -45,5 +56,3 @@ Respond ONLY in valid JSON:
   "driving_tips": []
 }
 """
-
-
