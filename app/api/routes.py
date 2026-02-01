@@ -13,7 +13,7 @@ def analyze_location(data: LocationRequest):
         terrain,
         data.latitude,
         data.longitude,
-        data.message     # 👈 PASS MESSAGE
+        data.message
     )
 
     return {

@@ -5,30 +5,42 @@ def build_vehicle_service_prompt(
     user_message: str | None = None
 ) -> str:
 
-    base_prompt = f"""
-You are an automotive service expert.
+    base_context = f"""
+You are an experienced automotive service advisor.
 
-Location:
+User location:
 Latitude: {latitude}
 Longitude: {longitude}
 Terrain: {terrain}
+
+Vehicle context:
+- Suspension
+- Shock absorbers
+- Brakes
+- Tires
+- Engine
+- Safety systems
 """
 
+    # 👉 CHAT MODE
     if user_message:
-        return base_prompt + f"""
+        return base_context + f"""
 User question:
 "{user_message}"
 
-Answer clearly and concisely in plain text.
+Answer in clear, simple English.
+Be practical and helpful.
+Do NOT return JSON.
 """
 
-    return base_prompt + """
-Provide vehicle servicing recommendations.
+    # 👉 RECOMMENDATION MODE
+    return base_context + """
+Give vehicle servicing recommendations based on terrain.
 
 Respond ONLY in valid JSON:
 {
   "terrain": "",
-  "risk_level": "",
+  "risk_level": "LOW | MEDIUM | HIGH",
   "recommended_services": [],
   "driving_tips": []
 }

@@ -29,51 +29,39 @@ def get_supported_model() -> str:
     return models[0].id
 
 
-MODEL_NAME = get_supported_model()
-print(f"[Groq] Using model: {MODEL_NAME}")
 
 def get_ai_suggestions(
     terrain: str,
     latitude: float,
     longitude: float,
     user_message: str | None = None
-) -> dict | str:
-
+):
     prompt = build_vehicle_service_prompt(
-    terrain,
-    latitude,
-    longitude,
-    user_message)
+        terrain,
+        latitude,
+        longitude,
+        user_message
+    )
 
+    completion = client.chat.completions.create(
+        model=os.getenv("GROQ_MODEL"),  # dynamic model
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.4
+    )
 
+    output = completion.choices[0].message.content.strip()
+
+    # CHAT MODE → return text
+    if user_message:
+        return output
+
+    # RECOMMENDATION MODE → return JSON
     try:
-        completion = client.chat.completions.create(
-            model=MODEL_NAME,
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.3
-        )
-
-        raw_output = completion.choices[0].message.content.strip()
-
-        return json.loads(raw_output)
-
+        return json.loads(output)
     except json.JSONDecodeError:
         return {
             "terrain": terrain,
             "risk_level": "UNKNOWN",
-            "recommended_services": [
-                "General vehicle inspection recommended"
-            ],
-            "driving_tips": [
-                "Drive cautiously and consult a service center"
-            ],
-            "raw_ai_output": raw_output
-        }
-
-    except Exception as e:
-        # IMPORTANT: surface Groq errors clearly
-        return {
-            "error": "Groq AI error",
-            "details": str(e),
-            "model_used": MODEL_NAME
+            "recommended_services": ["General vehicle inspection recommended"],
+            "driving_tips": ["Drive cautiously and consult a service center"]
         }

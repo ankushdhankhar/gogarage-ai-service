@@ -4,4 +4,4 @@ from typing import Optional
 class LocationRequest(BaseModel):
     latitude: float
     longitude: float
-    message: Optional[str] = None   # 👈 ADD THIS
+    message: Optional[str] = None
