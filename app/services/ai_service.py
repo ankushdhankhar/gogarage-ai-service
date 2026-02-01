@@ -19,15 +19,16 @@ client = Groq(api_key=GROQ_API_KEY)
 def get_supported_model() -> str:
     models = client.models.list().data
 
-    # Prefer instruction / chat capable models
     for m in models:
         name = m.id.lower()
         if "it" in name or "chat" in name or "instruct" in name:
             return m.id
 
-    # Fallback: first available model
     return models[0].id
 
+
+MODEL_NAME = get_supported_model()
+print(f"[Groq] Using model: {MODEL_NAME}")
 
 
 def get_ai_suggestions(
@@ -36,6 +37,11 @@ def get_ai_suggestions(
     longitude: float,
     user_message: str | None = None
 ):
+    """
+    If user_message is provided → return CHAT TEXT
+    Else → return JSON recommendations
+    """
+
     prompt = build_vehicle_service_prompt(
         terrain,
         latitude,
@@ -43,25 +49,38 @@ def get_ai_suggestions(
         user_message
     )
 
-    completion = client.chat.completions.create(
-        model=os.getenv("GROQ_MODEL"),  # dynamic model
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.4
-    )
-
-    output = completion.choices[0].message.content.strip()
-
-    # CHAT MODE → return text
-    if user_message:
-        return output
-
-    # RECOMMENDATION MODE → return JSON
     try:
-        return json.loads(output)
-    except json.JSONDecodeError:
+        completion = client.chat.completions.create(
+            model=MODEL_NAME,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.3
+        )
+
+        output = completion.choices[0].message.content.strip()
+
+        # 🔥 CHAT MODE → RETURN TEXT
+        if user_message:
+            return output
+
+        # 🔥 RECOMMENDATION MODE → RETURN JSON
+        try:
+            return json.loads(output)
+        except json.JSONDecodeError:
+            return {
+                "terrain": terrain,
+                "risk_level": "UNKNOWN",
+                "recommended_services": [
+                    "General vehicle inspection recommended"
+                ],
+                "driving_tips": [
+                    "Drive cautiously and consult a service center"
+                ],
+                "raw_ai_output": output
+            }
+
+    except Exception as e:
         return {
-            "terrain": terrain,
-            "risk_level": "UNKNOWN",
-            "recommended_services": ["General vehicle inspection recommended"],
-            "driving_tips": ["Drive cautiously and consult a service center"]
+            "error": "Groq AI error",
+            "details": str(e),
+            "model_used": MODEL_NAME
         }
